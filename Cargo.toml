@@ -1,0 +1,19 @@
+[package]
+name = "ppm"
+version = "5.0.0"
+authors = [
+    "Bastien MSI <nisole.bastien@outlook.fr>",
+    "Alexis Desjardins <vizuar.gamer@gmail.com>"
+    ]
+edition = "2018"
+build = "build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+libc = "0.2.0"
+c_string = "0.7.0"
+
+[lib]
+name = "ppm"
+crate-type = ["dylib"]
