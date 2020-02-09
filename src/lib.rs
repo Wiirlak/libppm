@@ -82,11 +82,6 @@ struct Pixel{
     b:*mut u8
 }
 
-
-
-//struct Pixel{
-//    pixel:[Color;8]
-//}
 #[derive(Clone, PartialEq, Eq, Debug)]
 struct Image{
     height: * mut c_int,
@@ -94,20 +89,6 @@ struct Image{
     rgbmax: * mut c_int,
     image:Vec<Pixel>
 }
-
-/*impl Image{
-    fn save(filename: Path, img: Image){
-        let mut f = File::open(filename)?;
-        let mu writer = BufWriter::new(&f);
-        write!(&mut writer, "P3\n{} {}\n{}\n{}", img.height, img.width, 255, img.pex);
-        Ok(())
-    }
-    fn invert(img: &Image){
-        for color in &img.pex{
-            color.invert();
-        }
-    }
-}*/
 
 impl Pixel{
     fn new(red: *mut u8, green: *mut u8, blue: *mut u8) -> Pixel {
@@ -134,15 +115,6 @@ impl Pixel{
         *self.b = avg;
     }
 }
-
-
-
-/*static mut Images:Image = Image{
-    height:0 as * mut c_int,
-    width:0 as * mut c_int,
-    image: Vec::new()   
-};*/
-
 
 
 /* **************************
@@ -178,11 +150,6 @@ fn read_ppm(  filename: &String,
             mut bp:* mut c_int,
             images: &mut Image
         )-> * mut c_int {
-
-    /*                        
-    let xsize:* mut c_int = xsizep ;
-    let ysize:* mut c_int = ysizep ; */
-    // println!("{}",filename);
     unsafe { ppma_read(filename.as_ptr(), &images.height, &images.width,&images.rgbmax, &rp, &gp, &bp) };
     unsafe{
         for _i in 0..images.height as u8
@@ -195,7 +162,7 @@ fn read_ppm(  filename: &String,
                 rp = rp.offset(1);
                 gp = gp.offset(1);
                 bp = bp.offset(1);
-                //println!("NIKE :({:?})",images.image.last());
+                //println!("Last :({:?})",images.image.last());
 
             }
         }
@@ -235,9 +202,7 @@ pub extern fn revert_color(input_name: *const c_char,
 
         let filename = CStr::from_ptr(input_name).to_string_lossy().into_owned().to_string();
         read_ppm(&filename,images.height,images.width,images.rgbmax,rp,gp,bp,&mut images);
-        let filenamed = format!("{}-inverted", filename);
-        // println!(" ALLO {:?}",filenamed);
-        
+        let filenamed = format!("{}-inverted", filename);        
         let mut r:Vec<* mut c_int> = Vec::new(); 
         let mut g:Vec<* mut c_int> = Vec::new();
         let mut b:Vec<* mut c_int> = Vec::new();
@@ -333,13 +298,6 @@ fn read_ppm_noc(  _filename: &String,
             images: &mut Image
         )-> * mut c_int {
 
-    /*                        
-    let xsize:* mut c_int = xsizep ;
-    let ysize:* mut c_int = ysizep ; */
-    // println!("{}",filename);
-    // unsafe { 
-    //     ppma_read(filename.as_ptr(), &images.height, &images.width,&images.rgbmax, &rp, &gp, &bp) 
-    // };
     unsafe{
         for _i in 0..images.height as u8
         {
@@ -351,7 +309,7 @@ fn read_ppm_noc(  _filename: &String,
                 rp = rp.offset(1);
                 gp = gp.offset(1);
                 bp = bp.offset(1);
-                //println!("NIKE :({:?})",images.image.last());
+                //println!("Last :({:?})",images.image.last());
 
             }
         }
