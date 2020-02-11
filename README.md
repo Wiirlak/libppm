@@ -1,6 +1,6 @@
 # Rust
 
-Ce projet permet de traiter une image PPM (P3) qui sera nommée **output.ppm**
+Ce projet permet de traiter une image PPM (P3) (**test.ppm**) qui sera nommée **output.ppm**
 Il utilise une version modifiée de ppma_io afin de traiter l'image.
 
 ## Commandes pour compiler le Rust
