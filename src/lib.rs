@@ -1,3 +1,5 @@
+#![crate_name = "ppm"]
+
 #![feature(test)]
 extern crate test;
 
@@ -62,57 +64,82 @@ mod tests {
     }
 }
 
-// TEST function
+/// Return 42
+/// # Return
+/// * 42
 #[no_mangle]
 pub extern fn dummy() -> u8{
     return 42;
 }
 
-// TEST function
+/// Return max of two number
+/// # Args
+/// * a : u8 
+/// * b : u8 
 #[no_mangle]
 pub extern fn max(a:u8, b:u8)->u8{
     return if a > b {a} else {b};
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-/* STRUCTURES */
-struct Pixel{
+/// Pixel struct
+pub struct Pixel{
+    /// Red
     r:*mut u8,
+    /// Grean
     g:*mut u8,
+    /// Blue
     b:*mut u8
 }
 
 #[derive(Clone, PartialEq, Eq, Debug)]
-struct Image{
+/// Image Struct
+pub struct Image{
+    /// Height
     height: * mut c_int,
+    /// Width
     width: * mut c_int,
+    /// RgbMax
     rgbmax: * mut c_int,
+    /// Image
     image:Vec<Pixel>
 }
 
+/// Implement Pixel
 impl Pixel{
-    fn new(red: *mut u8, green: *mut u8, blue: *mut u8) -> Pixel {
+    /// Create a new Pixel
+    pub fn new(red: *mut u8, green: *mut u8, blue: *mut u8) -> Pixel {
         Pixel {r: red, g: green, b: blue}
     }
-    fn red(&self) ->*mut u8 {
+    /// Return the red pixel
+    pub fn red(&self) ->*mut u8 {
         self.r
     }
-    fn green(&self) -> *mut u8 {
+    /// Return the green pixel
+    pub fn green(&self) -> *mut u8 {
         self.g
     }
-    fn blue(&self) -> *mut u8 {
+    /// Return the blue pixel
+    pub fn blue(&self) -> *mut u8 {
         self.b
     }
-    unsafe fn invert(self, rgb_max : u8){
+
+    /// Invert the current color of a pixel
+    /// # Args
+    /// * self : current pixel
+    /// * rgb_max : maximun of rgb color
+    pub unsafe fn invert(self, rgb_max : u8){
         *self.r = rgb_max - *self.r;
         *self.g = rgb_max - *self.g;
         *self.b = rgb_max - *self.b;
     }
-    unsafe fn gray(self){
+    /// Invert the grayscale of a pixel
+    /// # Args
+    /// * self : current pixel
+    pub unsafe fn gray(self){
         let avg = (*self.r + *self.g + *self.b) /3;
         *self.r = avg;
         *self.g = avg;
-        *self.b = avg;
     }
 }
 
@@ -139,9 +166,19 @@ extern "C" {
                 ) -> c_int;
 }
 
-//Read the image file (C)
+/// Read the image file (C)
+
+/// # Args : 
+/// * filename: &String
+/// * _xsizep:* mut c_int
+/// * _ysizep:* mut c_int
+/// * _rgb_maxp:* mut c_int 
+/// * rp:* mut c_int
+/// * gp:* mut c_int
+/// * bp:* mut c_int
+/// * images: &mut Image
 #[no_mangle]
-fn read_ppm(  filename: &String, 
+pub fn read_ppm(  filename: &String, 
             _xsizep:* mut c_int, 
             _ysizep:* mut c_int, 
             _rgb_maxp:* mut c_int ,
@@ -172,9 +209,16 @@ fn read_ppm(  filename: &String,
     return rp;
 }
 
-//Print a image file (C)
+/// Print a image file (C)
+
+/// # Args :
+/// * input_name: &String 
+/// * r:&Vec<* mut c_int> 
+/// * g:&Vec<* mut c_int> 
+/// * b:&Vec<* mut c_int>
+/// * text: &Image
 #[no_mangle]
-fn write_ppm( input_name: &String, 
+pub fn write_ppm( input_name: &String, 
                 r:&Vec<* mut c_int>, 
                 g:&Vec<* mut c_int>, 
                 b:&Vec<* mut c_int>,
@@ -184,6 +228,16 @@ fn write_ppm( input_name: &String,
 }
 
 #[no_mangle]
+/// Revert color of an image
+
+/// # Args : 
+/// * input_name: *const c_char 
+/// * xsizep:* mut c_int
+/// * ysizep:* mut c_int 
+/// * rgb_maxp:* mut c_int
+/// * rp:* mut c_int 
+/// * gp:* mut c_int 
+/// * bp:* mut c_int
 pub extern fn revert_color(input_name: *const c_char, 
                         xsizep:* mut c_int, 
                         ysizep:* mut c_int, 
@@ -220,6 +274,16 @@ pub extern fn revert_color(input_name: *const c_char,
 }
 
 #[no_mangle]
+/// Create a gray scale of an image
+
+/// # Args : 
+/// * input_name: *const c_char 
+/// * xsizep:* mut c_int
+/// * ysizep:* mut c_int 
+/// * rgb_maxp:* mut c_int
+/// * rp:* mut c_int 
+/// * gp:* mut c_int 
+/// * bp:* mut c_int
 pub extern fn gray_color(input_name: *const c_char, 
                         xsizep:* mut c_int, 
                         ysizep:* mut c_int, 
@@ -259,7 +323,7 @@ pub extern fn gray_color(input_name: *const c_char,
 
 //Read a file (RUST)
 #[no_mangle]
-pub extern fn read_file(filename : String)-> io::Result<()>{
+extern fn read_file(filename : String)-> io::Result<()>{
     println!("filename: {}", filename);
     // work with `name`
     //let mut f = BufReader::new(File::open(filename).expect("open failed")); {
@@ -272,7 +336,7 @@ pub extern fn read_file(filename : String)-> io::Result<()>{
 
 //TEST (RUST)
 #[no_mangle]
-pub extern fn setFileName(filenam: *const c_char) {
+extern fn setFileName(filenam: *const c_char) {
     let filename = unsafe {
         CStr::from_ptr(filenam).to_string_lossy().into_owned()
     };
