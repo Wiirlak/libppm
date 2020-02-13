@@ -1,5 +1,7 @@
 # Rust
 
+Projet par Bastien NISOLE et Alexis DESJARDINS étudiants en 4AL1
+
 Ce projet permet de traiter une image PPM (P3) (**test.ppm**) qui sera nommée **output.ppm**
 Il utilise une version modifiée de ppma_io afin de traiter l'image.
 
